@@ -44,7 +44,6 @@ A researcher installs `q4` with one command, gives it a Z4-linear code, and gets
 
 ### not committed
 
-- [ ] `0012` Cargo workspace, scripts/task seam and CI <sup>chore · p0 · s · infra</sup>
 - [ ] `0013` Certificate shape for Z4 distance claims <sup>spike · p0 · m · cert · z4</sup>
 - [ ] `0014` Ququart stabilizer codes: confirm the Z4 symplectic formalism and look for an existing table <sup>spike · p2 · s · theory · ququart</sup>
 - [ ] `0015` Z4 symbols on two bit planes <sup>feature · p0 · m · core · z4</sup>
@@ -61,6 +60,10 @@ A researcher installs `q4` with one command, gives it a Z4-linear code, and gets
 - [ ] `0026` Property tests for the Z4 algebra <sup>feature · p1 · s · core · z4</sup>
 - [ ] `0027` README: what q4 proves and how to use it <sup>docs · p0 · s · docs</sup>
 - [ ] `0028` One-command install, tested in CI <sup>chore · p0 · s · infra</sup>
+
+### in progress
+
+- [ ] `0012` Cargo workspace, scripts/task seam and CI <sup>chore · p0 · s · infra</sup>
 
 ### done
 
