@@ -1,0 +1,9 @@
+#!/bin/sh
+# One-time setup for a fresh clone.
+set -eu
+cd "$(dirname "$0")/.."
+git config core.hooksPath .githooks
+rustup toolchain install
+# Teaches git to resolve ROADMAP.md and colliding item numbers when branches merge.
+cairn init --git
+echo "hooks installed; run scripts/agent doctor to verify the rest"

@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  # Not `edited`: a description edit would start a run that cancels the one testing the
+  # code, and the cancelled run's `required` job reports a failure.
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # Both platforms the v0.1 milestone promises; nothing here is platform-specific
+    # yet, but install and file handling will be.
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the toolchain pinned in rust-toolchain.toml
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - run: scripts/task check
+
+  pr-title:
+    # The squash merge uses the PR title as the commit subject on main.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf '%s\n' "$TITLE" > "$RUNNER_TEMP/title"
+          .githooks/commit-msg "$RUNNER_TEMP/title"
+
+  required:
+    if: always()
+    needs: [check, pr-title]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All jobs passed or were skipped
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            case "$result" in
+              success | skipped) ;;
+              *) echo "a required job ended in: $result"; exit 1 ;;
+            esac
+          done

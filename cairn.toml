@@ -1,0 +1,330 @@
+# cairn.toml — the schema for quaternary's roadmap and issues.
+#
+# The project is an open referee for quaternary codes. Two axes describe any
+# piece of work in it, and the schema names both:
+#
+#   cell   which of the four kinds of code it serves (the quaternary square)
+#
+#                      classical            quantum
+#            GF(4)     gf4 (linear)         qubit (additive / stabilizer)
+#            Z4        z4  (Z4-linear)      ququart (Z4 symplectic)
+#
+#   area   which layer of the referee it builds, in build order:
+#          core → cert → checker → engine → ledger → frontier → atlas
+#
+#   cairn config          show the resolved schema
+#   cairn check           validate every item against it
+#   cairn list --view square   work by cell
+
+format = 5
+
+[project]
+name = "quaternary"
+description = "An open referee for quaternary codes: exact minimum distance over GF(4) and Z4, classical and quantum, with certificates anyone can check."
+dir = "cairn/items"
+default_type = "feature"
+default_status = "backlog"
+# A new project can afford the gate from day one: nothing closes with an
+# unticked criterion, so "done" means somebody checked.
+require_criteria = true
+claim_stale_after = 7
+
+# ─── Item types ──────────────────────────────────────────────────────────────
+
+[[type]]
+name = "feature"
+icon = "+"
+color = "cyan"
+template = """
+## Problem
+
+## Proposal
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "bug"
+icon = "!"
+color = "red"
+template = """
+## What happens
+
+## What should happen
+
+## Reproduction
+
+1.
+
+## Acceptance criteria
+
+- [ ] A test reproduces the failure and passes with the fix.
+"""
+
+# A question with a timebox. It closes with an answer or it was wasted, so the
+# answer has its own heading and the criteria insist on it.
+[[type]]
+name = "spike"
+icon = "?"
+color = "yellow"
+description = "A timeboxed question that closes with a written answer"
+template = """
+## Question
+
+## Why it matters
+
+## Leading hypothesis
+
+## Timebox
+
+## Answer
+
+## Acceptance criteria
+
+- [ ] The Answer section states a conclusion and the evidence for it.
+- [ ] The items this unblocks are created or updated to match the answer.
+"""
+
+# The debate that shaped this project is recorded here, not in chat, so the
+# next person can see why DNA is out before proposing it again.
+[[type]]
+name = "decision"
+icon = "§"
+color = "magenta"
+description = "A choice worth remembering after the work is finished"
+template = """
+## Context
+
+## Options considered
+
+## Decision
+
+## Revisit when
+
+## Acceptance criteria
+
+- [ ] The choice, its evidence and its consequences are recorded.
+"""
+
+[[type]]
+name = "chore"
+icon = "~"
+color = "gray"
+template = """
+## Purpose
+
+## Approach
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "docs"
+icon = "*"
+color = "blue"
+template = """
+## Reader and question
+
+## Change
+
+## Acceptance criteria
+
+- [ ] The reader can complete the described task with the current program.
+"""
+
+# Work that leaves the repository: a message to a table maintainer, a record
+# submission, a paper. Someone has to send it; the item says what and to whom.
+[[type]]
+name = "outreach"
+icon = "@"
+color = "green"
+description = "Contact with the people whose tables and tools this serves"
+template = """
+## Who
+
+## What we ask or offer
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "milestone"
+description = "A release somebody can install and use; dates are decisions"
+groups = "one"
+inverse = "scheduled"
+template = """
+## Ships
+
+## Done when
+
+- [ ]
+
+## Explicitly not in this milestone
+
+-
+"""
+
+# ─── Statuses ────────────────────────────────────────────────────────────────
+
+[[status]]
+name = "backlog"
+category = "open"
+color = "gray"
+label = "not committed"
+
+[[status]]
+name = "planned"
+category = "open"
+color = "blue"
+label = "up next"
+
+[[status]]
+name = "doing"
+label = "in progress"
+category = "active"
+color = "yellow"
+
+# Waiting on something outside the repository (a maintainer's reply, a licence
+# answer). Unfinished dependencies are already `blocked=true`; this is not that.
+[[status]]
+name = "waiting"
+category = "open"
+color = "red"
+
+[[status]]
+name = "done"
+category = "done"
+color = "green"
+
+[[status]]
+name = "dropped"
+category = "dropped"
+color = "gray"
+board = false
+
+# ─── Fields ──────────────────────────────────────────────────────────────────
+
+[[field]]
+name = "priority"
+kind = "enum"
+values = ["p0", "p1", "p2", "p3"]
+default = "p2"
+column = true
+description = "Relative to the milestone: p0 means it does not ship without this"
+
+[[field]]
+name = "effort"
+kind = "enum"
+values = ["s", "m", "l", "xl"]
+column = true
+description = "A size, not an estimate: s ≈ hours, m ≈ a day, l ≈ days; xl means split it"
+
+[[field]]
+name = "area"
+kind = "enum"
+values = ["core", "cert", "checker", "engine", "ledger", "frontier", "atlas", "theory", "cli", "python", "infra", "docs"]
+column = true
+description = "Layer of the referee: core (rings, bit planes, code types, formats), cert (certificate format), checker (the independent verifier), engine (distance algorithms), ledger (audited tables), frontier (gaps and submissions), atlas (pages and labels), theory (mathematics a spike must settle), cli, python, infra, docs"
+
+[[field]]
+name = "cell"
+kind = "list"
+values = ["gf4", "qubit", "z4", "ququart"]
+column = true
+description = "Which cells of the quaternary square this serves; empty means all of them or none in particular"
+
+[[field]]
+name = "due"
+kind = "date"
+description = "When a milestone lands, YYYY-MM-DD"
+
+[[field]]
+name = "part_of"
+kind = "ref"
+target = "*"
+cardinality = "many"
+acyclic = true
+rollup = true
+inverse = "contains"
+description = "A larger piece of work this belongs to"
+
+# ─── Views ───────────────────────────────────────────────────────────────────
+
+[[view]]
+name = "now"
+description = "What is actually being worked on"
+filter = "category=active"
+sort = "priority,id"
+
+[[view]]
+name = "next"
+description = "Ready to start, most important first"
+filter = "ready=true,category=open"
+sort = "milestone,priority,id"
+
+[[view]]
+name = "triage"
+description = "Open items with no milestone"
+filter = "milestone=,category!=done|dropped"
+columns = ["id", "type", "title", "created"]
+
+[[view]]
+name = "spikes"
+description = "Open questions, and what each one is holding up"
+filter = "type=spike,category!=done|dropped"
+sort = "milestone,priority"
+columns = ["id", "milestone", "priority", "area", "title"]
+
+[[view]]
+name = "decisions"
+description = "Why the project is shaped the way it is"
+# Decisions close when recorded, so this view names every category to show them.
+filter = "type=decision,category=done|open|active"
+sort = "id"
+columns = ["id", "status", "title"]
+
+[[view]]
+name = "square"
+description = "Cell-specific work, grouped by the cell it serves"
+filter = "cell!=,category!=dropped"
+sort = "cell,milestone,priority"
+columns = ["id", "cell", "milestone", "priority", "area", "title"]
+
+[[view]]
+name = "waiting"
+description = "Blocked on people outside the repository"
+filter = "status=waiting"
+sort = "milestone"
+
+[[view]]
+name = "outreach"
+description = "Messages that still have to leave the repository"
+filter = "type=outreach,category!=done|dropped"
+sort = "milestone,priority"
+
+# ─── Hooks ───────────────────────────────────────────────────────────────────
+
+[hooks]
+after-create = "cairn render -q"
+after-change = "cairn render -q"
+after-remove = "cairn render -q"
+
+# ─── Rendered roadmap ────────────────────────────────────────────────────────
+
+[render]
+target = "ROADMAP.md"
+title = "Roadmap"
+group_by = "milestone"
+include = "category!=dropped"
+checkbox = true
+show_ids = true
+progress = true
+group_by_status = true
+link_items = false
+header = "doc/roadmap-intro.md"

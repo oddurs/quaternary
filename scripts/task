@@ -1,0 +1,45 @@
+#!/bin/sh
+# The only interface CI, git hooks, and scripts/agent use to talk to the toolchain.
+set -eu
+
+cd "$(dirname "$0")/.."
+
+# The checker is trusted because it shares no code with what it checks, and the
+# certificate types must stay readable without the engine. Enforce both here so
+# a dependency added by accident fails lint, not a review.
+boundaries() {
+    if cargo tree -p q4-check -e normal --prefix none | grep -Eq '^q4-(core|engine) '; then
+        echo "boundary: q4-check must not depend on q4-core or q4-engine" >&2
+        return 1
+    fi
+    if cargo tree -p q4-cert -e normal --prefix none | grep -v '^q4-cert ' | grep -Eq '^q4-'; then
+        echo "boundary: q4-cert must not depend on any other workspace crate" >&2
+        return 1
+    fi
+}
+
+run() {
+    case "$1" in
+        fmt) cargo fmt --all ;;
+        fmt:check) cargo fmt --all --check ;;
+        lint)
+            cargo clippy --workspace --all-targets --locked -- -D warnings
+            boundaries
+            ;;
+        test) cargo test --workspace --locked ;;
+        build) cargo build --workspace --locked ;;
+        check)
+            run fmt:check
+            run lint
+            run test
+            run build
+            ;;
+        *)
+            echo "usage: scripts/task {fmt|fmt:check|lint|test|build|check}" >&2
+            exit 2
+            ;;
+    esac
+}
+
+[ $# -eq 1 ] || run usage
+run "$1"

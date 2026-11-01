@@ -1,0 +1,39 @@
+name: Bug report
+description: q4 gives a wrong answer, crashes, or misreports how an answer is known.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: The command you ran and what it printed, including any error text.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: If a distance is wrong, say where the correct value comes from (a paper, a table, another tool).
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: The code
+      description: The smallest `.q4` file or generator matrix that shows the problem.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: q4 version or commit
+      description: Output of `q4 --version`.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system and architecture
+    validations:
+      required: true
