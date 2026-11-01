@@ -38,7 +38,7 @@ system. The `decisions` view (`cairn list --view decisions`) records why.
 
 ## v0.1 — Checkable Z4 distances
 
-`###·······` 23% · 5 of 22 done · due 2026-11-29
+`###·······` 27% · 6 of 22 done · due 2026-11-29
 
 A researcher installs `q4` with one command, gives it a Z4-linear code, and gets
 
@@ -61,10 +61,6 @@ A researcher installs `q4` with one command, gives it a Z4-linear code, and gets
 - [ ] `0027` README: what q4 proves and how to use it <sup>docs · p0 · s · docs</sup>
 - [ ] `0028` One-command install, tested in CI <sup>chore · p0 · s · infra</sup>
 
-### in progress
-
-- [ ] `0012` Cargo workspace, scripts/task seam and CI <sup>chore · p0 · s · infra</sup>
-
 ### done
 
 - [x] `0007` Scope is the quaternary square, not every four-letter alphabet <sup>decision</sup>
@@ -72,6 +68,7 @@ A researcher installs `q4` with one command, gives it a Z4-linear code, and gets
 - [x] `0009` Checker before engine, and the checker shares no code <sup>decision</sup>
 - [x] `0010` Reproduce the tables, never compete with them <sup>decision</sup>
 - [x] `0011` Every claim carries its proof status <sup>decision</sup>
+- [x] `0012` Cargo workspace, scripts/task seam and CI <sup>chore · p0 · s · infra</sup>
 
 ## v0.2 — The Z4 audit
 
